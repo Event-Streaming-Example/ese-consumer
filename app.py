@@ -1,26 +1,33 @@
 import streamlit as st
 
-from components.Heading import create_heading
-from components.Sidebar import get_sidebar_inputs, get_historical_sidebar
-from components.Sidebar import BE_DATA_SOURCE, HISTORICAL_FEED_TYPE
+from components.constants import DATA_SOURCE_BE, DATA_SOURCE_KAFKA
+from components.view.Heading import heading
+from components.view.Sidebar import get_data_source, get_usecase
+from components.view.ControlPannel import be_pannel, kafka_pannel
 
-from components.pages.OverviewPage import get_overview_page
-from components.pages.StrategiesPage import get_strategies_page
+heading()
 
-create_heading()
+data_source = get_data_source()
+usecase = get_usecase()
 
-data_source, feed_type = get_sidebar_inputs()
+description_tab, control_tab, results_tab = st.tabs(["Description", "Configuration", "Results"])
+results_space = results_tab.empty()
+usecase.display(description_tab)
 
-st.sidebar.divider()
+if data_source == DATA_SOURCE_BE:
+    usecase.set_control(
+        ctx=control_tab,
+        view_ctx=results_space,
+        pannel=be_pannel
+    )
+elif data_source == DATA_SOURCE_KAFKA:
+    usecase.set_control(
+        ctx=control_tab,
+        view_ctx=results_space,
+        pannel=kafka_pannel
+    )
 
-if feed_type == HISTORICAL_FEED_TYPE:
-    get_historical_sidebar()
-
-overview_tab, strategies_tab = st.tabs(["Overview","Strategies"])
-
-with overview_tab:
-    get_overview_page()     
-
-with strategies_tab:
-    get_strategies_page(data_source, feed_type)
-    
+if not usecase.initiate:
+    results_tab.info("Initiate Polling to view results")
+else:
+    usecase.results(results_tab)

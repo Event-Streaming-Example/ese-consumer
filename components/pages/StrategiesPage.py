@@ -1,6 +1,6 @@
 import streamlit as st
 
-from components.Sidebar import BE_DATA_SOURCE, HISTORICAL_FEED_TYPE
+from components.view.Sidebar import BE_DATA_SOURCE, HISTORICAL_FEED_TYPE
 
 from .strategies.BEStrategy import get_be_historical_strategy, get_be_live_startegy
 from .strategies.KafkaStrategy import get_kafka_historical_startegy, get_kafka_live_strategy
