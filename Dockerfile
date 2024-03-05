@@ -4,9 +4,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install pipenv
-RUN pipenv run pip freeze > requirements.txt
-RUN pip install -r requirements.txt
+RUN pip install -r ./requirements.txt
 
 EXPOSE 8501
 
