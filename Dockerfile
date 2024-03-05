@@ -4,7 +4,8 @@ WORKDIR /app
 
 COPY . .
 
-RUN pip install -r ./requirements.txt
+RUN pip install pipenv
+RUN pipenv install
 
 EXPOSE 8501
 
