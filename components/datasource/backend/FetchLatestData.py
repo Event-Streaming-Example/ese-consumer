@@ -1,6 +1,7 @@
-import random
+import requests
 
-from components.models import BackendDSConfig
+from components.configs import BackendDSConfig
 
-def fetch(config: BackendDSConfig):
-    return random.randint(1, 100)
+def fetch(ctx, config: BackendDSConfig):
+    ctx.info(f"Polling BE@{config.polling_endpoint}")
+    return requests.get(config.polling_endpoint).json()

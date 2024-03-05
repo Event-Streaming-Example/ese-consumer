@@ -1,4 +1,4 @@
-from components.models import BackendDSConfig
+from components.configs import BackendDSConfig
 
 def get_backend_ds_config(ctx) -> BackendDSConfig:
     ctx.markdown("##### Backend Server Configuration")
@@ -6,7 +6,7 @@ def get_backend_ds_config(ctx) -> BackendDSConfig:
 
     protocol = proto_col.selectbox("Protocol", ("http", "https"))
     base_url = base_col.text_input("Base URL", placeholder="localhost", value="localhost")
-    endpoint = end_col.text_input("Endpoint", placeholder="/events", value="/events")
+    endpoint = end_col.text_input("GET Endpoint", placeholder="/events", value="/events")
     frequency = freq_col.number_input("Polling frequency", value=5)
 
     return BackendDSConfig(protocol, base_url, endpoint, frequency)

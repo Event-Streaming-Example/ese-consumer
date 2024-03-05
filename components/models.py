@@ -1,5 +1,12 @@
 import asyncio
 from abc import ABC, abstractclassmethod
+from components.configs import DataSourceConfig, ViewConfig
+
+
+
+
+
+
 
 class DataSource:
 
@@ -11,20 +18,12 @@ class DataSource:
         self.description = description
 
 
-class BackendDSConfig:
-
-    polling_endpoint: str
-    frequency: int
-
-    def __init__(self, protocol: str,  base_url: str, endpoint: str, frequecy: int) -> None:
-        self.polling_endpoint = f"{protocol}://{base_url}{endpoint}"
-        self.frequency = frequecy
 
 
 class UsecaseListener(ABC):
 
     @abstractclassmethod
-    def update(self, data, view_ctx):
+    def update(self, data, view_ctx, view_config: ViewConfig):
         pass
 
     @abstractclassmethod
@@ -69,32 +68,23 @@ class Usecase:
     def results(self, ctx):
         self.listener.view(self=self.listener, ctx=ctx)
 
-    async def _poll_backend(self, ctx, view_ctx, polling_function, config:BackendDSConfig):
+    async def _poll_data_and_update_listener(self, ctx, view_ctx, polling_function, config:DataSourceConfig, view_config: ViewConfig):
+        placeholder = ctx.empty()
+        update_counter_ctx = ctx.empty()
         stop = ctx.button("Stop Polling")
-        ctx.info(f"Polling BE@{config.polling_endpoint}")
+        update_counter = 0
+
         while self.initiate:
+
             if self.initiate and stop:
                 self.initiate = False
-            latest_data = polling_function(config)
+
+            latest_data = polling_function(placeholder, config)
+
             if latest_data != self.current_data:
+                update_counter += 1
                 self.current_data = latest_data
-                self.listener.update(self=self.listener, data=latest_data, view_ctx=view_ctx)
-            await asyncio.sleep(config.frequency)
+                self.listener.update(self=self.listener, data=latest_data, view_ctx=view_ctx, view_config=view_config)
+                update_counter_ctx.markdown(f"Updates Received : __{update_counter}__")
 
-    async def _poll_kafka(self, ctx, view_ctx, polling_function, config):
-        latest_data = polling_function(config)
-        ctx.info(f"Polling Kafka is a work in progress | Dummy Data : {latest_data}")
-
-
-
-
-
-
-class MailerConfig:
-
-    queue_url: str
-    channel: str
-
-    def __init__(self, queue_url: str, channel: str) -> None:
-        self.queue_url = queue_url
-        self.channel = channel
+            await asyncio.sleep(config.polling_frequency)  

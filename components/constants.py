@@ -1,5 +1,6 @@
 from components.models import DataSource, Usecase
-from components.usecase.TriggerEmailOnSteadyClick import TriggerEmailOnSteadyClick
+from components.usecase.TriggerEmailOnSteadyClick.impl_usecase import TriggerEmailOnSteadyClick
+from components.usecase.DummyUsecaseExample.impl_usecase import DummyUsecaseExample
 
 DATA_SOURCE="Select Data Source"
 DATA_SOURCE_BE=DataSource(
@@ -14,6 +15,14 @@ DATA_SOURCE_KAFKA=DataSource(
 
 
 USECASE="Select Usecase"
+DUMMY_USECASE=Usecase(
+    option="Dummy usecase example",
+    trigger="What action lead to this thing happening",
+    condition="What condition must be met to act on this trigger",
+    action="What action should be done when the condition is met",
+    reason="What is the reason for having this usecase",
+    listener=DummyUsecaseExample
+)
 EMAIL_USECASE_1=Usecase(
     option="Trigger email on steady clicks",
     trigger="5 click events in a space of 10 seconds",

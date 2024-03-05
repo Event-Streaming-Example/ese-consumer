@@ -10,15 +10,16 @@ from components.models import Usecase
 import asyncio
 
 
-def be_pannel(self: Usecase, ctx, view_ctx):
-    mailer_config = get_mailer_config(ctx)
+def be_pannel_teosc(self: Usecase, ctx, view_ctx):
     be_config = get_backend_ds_config(ctx)
+    mailer_config = get_mailer_config(ctx, be_config)
+
 
     if mailer_config.channel != "" and mailer_config.queue_url != "":
         if be_config.frequency != 0:
             if ctx.button("Initiate Polling"):
                 self.initiate = True
-                asyncio.run(self._poll_backend(ctx, view_ctx, be_fetch, be_config))
+                asyncio.run(self._poll_data_and_update_listener(ctx, view_ctx, be_fetch, be_config, mailer_config))
         else:
             ctx.error("Polling frequency should be greater than 1")
     else:
@@ -26,6 +27,7 @@ def be_pannel(self: Usecase, ctx, view_ctx):
 
 
 
-def kafka_pannel(self: Usecase, ctx, view_ctx):
+def kafka_pannel_teosc(self: Usecase, ctx, view_ctx):
     kafka_config = get_kafka_ds_config(ctx)
-    asyncio.run(self._poll_kafka(ctx, view_ctx, kafka_fetch, kafka_config))
+    mailer_config = get_mailer_config(ctx, kafka_config)
+    asyncio.run(self._poll_data_and_update_listener(ctx, view_ctx, kafka_fetch, kafka_config, mailer_config))
