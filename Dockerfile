@@ -5,10 +5,11 @@ WORKDIR /app
 COPY . .
 
 RUN pip install pipenv
-RUN pipenv install
+RUN pipenv run pip freeze > requirements.txt
+RUN pip install -r requirements.txt
 
 EXPOSE 8501
 
 HEALTHCHECK CMD curl --fail http://localhost:8501/_stcore/health
 
-ENTRYPOINT ["pipenv", "shell", "&&", "streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]

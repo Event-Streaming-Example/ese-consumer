@@ -35,7 +35,7 @@ streamlit run app.py
 The following command will initialize the docker container and expose our application on port `8501`
 
 ```bash
-docker run -it -p 8501:8501 --name ese-container saumyabhatt10642/ese-consumer
+docker run -it -p 8501:8501 --name ese-consumer saumyabhatt10642/ese-consumer
 ```
 
 ---
