@@ -5,7 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN pip install pipenv
-RUN pipenv lock -r > requirements.txt
+RUN pipenv requirements > requirements.txt
 RUN pip install -r requirements.txt
 
 EXPOSE 8501
