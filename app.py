@@ -8,6 +8,7 @@ from components.usecase.trigger_email_on_steady_click.view_config_pannel import 
 from components.usecase.dummy_usecase_example.view_config_pannel import be_pannel_dummy, kafka_pannel_dummy
 
 
+
 heading()
 
 data_source = get_data_source()

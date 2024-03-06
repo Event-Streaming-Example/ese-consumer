@@ -29,5 +29,6 @@ class Snapshot():
 
 @dataclass
 class IPSnapshot(): 
-      ip          : str
-      logs        : List[Snapshot]
+      
+      ip  : str
+      logs: List[Snapshot]
