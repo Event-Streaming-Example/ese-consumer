@@ -1,4 +1,4 @@
-from components.configs import KafkaDSConfig
+from components.datasource.kafka.models.configs import KafkaDSConfig
 
 
 def get_kafka_ds_config(ctx) -> KafkaDSConfig:

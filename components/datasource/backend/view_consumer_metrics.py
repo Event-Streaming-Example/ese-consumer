@@ -3,7 +3,7 @@ import sys
 from typing import List
 from datetime import timedelta
 
-from components.usecase.TriggerEmailOnSteadyClick.models import IPSnapshot
+from components.datasource.backend.models.interractor import IPSnapshot
 
 AVG_LAG=[]
 
@@ -21,6 +21,9 @@ def _get_snapshot_stats_avg(data: List[int]):
 
 
 def _format_time_delta(milliseconds: int):
+    if milliseconds == sys.maxsize:
+        return "NA"
+    
     delta = timedelta(milliseconds=milliseconds)
 
     days = delta.days

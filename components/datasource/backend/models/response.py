@@ -1,7 +1,9 @@
-from datetime import datetime
-from dataclasses import dataclass
 from typing import List
+from dataclasses import dataclass
+
 from components.datasource import EventType, EventSubType
+
+
 
 @dataclass
 class EventData:

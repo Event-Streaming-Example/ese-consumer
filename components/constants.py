@@ -1,6 +1,8 @@
 from components.models import DataSource, Usecase
-from components.usecase.TriggerEmailOnSteadyClick.impl_usecase import TriggerEmailOnSteadyClick
-from components.usecase.DummyUsecaseExample.impl_usecase import DummyUsecaseExample
+
+from components.usecase.trigger_email_on_steady_click.impl_usecase import TriggerEmailOnSteadyClick
+from components.usecase.dummy_usecase_example.impl_usecase import DummyUsecaseExample
+
 
 DATA_SOURCE="Select Data Source"
 DATA_SOURCE_BE=DataSource(

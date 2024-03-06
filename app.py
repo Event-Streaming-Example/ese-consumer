@@ -1,11 +1,11 @@
 import streamlit as st
 
 from components.constants import DATA_SOURCE_BE, DATA_SOURCE_KAFKA, EMAIL_USECASE_1, DUMMY_USECASE
-from components.view.Heading import heading
-from components.view.Sidebar import get_data_source, get_usecase
+from components.view.heading import heading
+from components.view.sidebar import get_data_source, get_usecase
 
-from components.usecase.TriggerEmailOnSteadyClick.view_pannel import be_pannel_teosc, kafka_pannel_teosc
-from components.usecase.DummyUsecaseExample.view_pannel import be_pannel_dummy, kafka_pannel_dummy
+from components.usecase.trigger_email_on_steady_click.view_config_pannel import be_pannel, kafka_pannel
+from components.usecase.dummy_usecase_example.view_config_pannel import be_pannel_dummy, kafka_pannel_dummy
 
 heading()
 
@@ -23,15 +23,15 @@ if data_source == DATA_SOURCE_BE:
 
     if usecase == EMAIL_USECASE_1:
         usecase.set_control(
-            ctx=control_tab,
+            config_ctx=control_tab,
             view_ctx=results_space,
             stats_ctx=stats_space,
-            pannel=be_pannel_teosc
+            pannel=be_pannel
         )
 
     elif usecase == DUMMY_USECASE:
         usecase.set_control(
-            ctx=control_tab,
+            config_ctx=control_tab,
             view_ctx=results_space,
             stats_ctx=stats_space,
             pannel=be_pannel_dummy
@@ -41,15 +41,15 @@ elif data_source == DATA_SOURCE_KAFKA:
 
     if usecase == EMAIL_USECASE_1:
         usecase.set_control(
-            ctx=control_tab,
+            config_ctx=control_tab,
             view_ctx=results_space,
             stats_ctx=stats_space,
-            pannel=kafka_pannel_teosc
+            pannel=kafka_pannel
         )
         
     elif usecase == DUMMY_USECASE:
         usecase.set_control(
-            ctx=control_tab,
+            config_ctx=control_tab,
             view_ctx=results_space,
             stats_ctx=stats_space,
             pannel=kafka_pannel_dummy

@@ -1,4 +1,4 @@
-from components.configs import BackendDSConfig
+from components.datasource.backend.models.configs import BackendDSConfig
 
 def get_backend_ds_config(ctx) -> BackendDSConfig:
     ctx.markdown("##### Backend Server Configuration")

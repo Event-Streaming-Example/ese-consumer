@@ -1,5 +1,4 @@
-from components.models import UsecaseListener
-from components.configs import ViewConfig
+from components.abstractions import UsecaseListener, ViewConfig
 
 class DummyUsecaseExample(UsecaseListener):
 

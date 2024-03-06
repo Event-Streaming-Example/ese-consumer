@@ -1,22 +1,13 @@
-import sys
-
 from typing import List
 
-from components.models import UsecaseListener
-from components.configs import MailerViewConfig
-from components.datasource.backend.data_model import EventIPSnapshotData
-from components.usecase.TriggerEmailOnSteadyClick.models import Snapshot, IPSnapshot
-from components.usecase.TriggerEmailOnSteadyClick.view_consumer_metrics import get_max_lag, view_lag_metrics
+from components.abstractions import UsecaseListener
+from components.mailer.configs import MailerViewConfig
+from components.datasource.backend.models.response import EventIPSnapshotData
+from components.datasource.backend.models.interractor import Snapshot, IPSnapshot
+from components.datasource.backend.view_consumer_metrics import get_max_lag, view_lag_metrics
 
 
-SNAPSHOT = []
-
-AVG_LAG=[]
-MAX_PRODUCER_LAG=0
-MAX_CONSUMER_LAG=0
-MIN_PRODUCER_LAG=sys.maxsize
-MIN_CONSUMER_LAG=sys.maxsize
-
+SNAPSHOT:List[IPSnapshot] = []
 
 
 class TriggerEmailOnSteadyClick(UsecaseListener):
@@ -27,7 +18,7 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
 
 
     def update(self, data: List[EventIPSnapshotData], view_ctx, stats_ctx, view_config: MailerViewConfig):
-        global SNAPSHOT, MAX_PRODUCER_LAG, MAX_CONSUMER_LAG
+        global SNAPSHOT
         SNAPSHOT = self._format_data(self, data)
         
         get_max_lag(SNAPSHOT)
@@ -36,7 +27,7 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
 
 
     def view(self, view_ctx, stats_ctx):
-        global SNAPSHOT, MAX_PRODUCER_LAG, MAX_CONSUMER_LAG
+        global SNAPSHOT
         if view_ctx.button("Clear output"):
             SNAPSHOT.clear()
         view_ctx.write(SNAPSHOT)

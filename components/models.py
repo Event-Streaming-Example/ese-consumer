@@ -1,11 +1,6 @@
 import asyncio
-from abc import ABC, abstractclassmethod
-from components.configs import DataSourceConfig, ViewConfig
 
-
-
-
-
+from components.abstractions import DataSourceConfig, ViewConfig, UsecaseListener
 
 
 class DataSource:
@@ -16,20 +11,6 @@ class DataSource:
     def __init__(self, option:str, description:str):
         self.option = option
         self.description = description
-
-
-
-
-class UsecaseListener(ABC):
-
-    @abstractclassmethod
-    def update(self, data, view_ctx, stats_ctx, view_config: ViewConfig):
-        pass
-
-    @abstractclassmethod
-    def view(self, view_ctx, stats_ctx):
-        pass
-
 
 
 
@@ -62,8 +43,8 @@ class Usecase:
             "Reason" : self.reason
         }, use_container_width=True)
 
-    def set_control(self, ctx, view_ctx, stats_ctx, pannel):
-        pannel(self, ctx, view_ctx, stats_ctx)
+    def set_control(self, config_ctx, view_ctx, stats_ctx, pannel):
+        pannel(self, config_ctx, view_ctx, stats_ctx)
 
     def results(self, view_ctx, stats_ctx):
         self.listener.view(self=self.listener, view_ctx=view_ctx, stats_ctx=stats_ctx)

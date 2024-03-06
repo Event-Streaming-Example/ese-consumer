@@ -1,11 +1,11 @@
-import json
 import requests
 
 from typing import List
-from components.datasource.backend.data_model import EventIPSnapshotData, Entity, EventData, EventSubType, EventLog, EventType, MetaData
-from components.configs import BackendDSConfig
 
-def fetch(ctx, config: BackendDSConfig) -> List[EventIPSnapshotData]:
+from components.datasource.backend.models.response import EventIPSnapshotData, Entity, EventData, EventSubType, EventLog, EventType, MetaData
+from components.datasource.backend.models.configs import BackendDSConfig
+
+def fetch_latest_data(ctx, config: BackendDSConfig) -> List[EventIPSnapshotData]:
     ctx.info(f"Polling BE@{config.polling_endpoint}")
     json_data = requests.get(config.polling_endpoint).json()
     return _deserialize_response(json_data)

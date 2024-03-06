@@ -1,10 +1,9 @@
 import time
 
-from dataclasses import dataclass
 from typing import List
+from dataclasses import dataclass
 
-from components.datasource.backend.data_model import EventType, EventSubType
-
+from components.datasource import EventType, EventSubType
 
 class Snapshot():
 
