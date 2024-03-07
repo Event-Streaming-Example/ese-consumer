@@ -28,9 +28,9 @@ DUMMY_USECASE = Usecase(
 )
 EMAIL_USECASE_1 = Usecase(
     option      = "Trigger email on steady clicks",
-    trigger     = "5 click events in a space of 10 seconds",
+    trigger     = "3 click events in a space of 1 second",
     condition   = "Clicks must be from the same IP Address",
     action      = "Trigger email to click_updates@ese.com",
-    reason      = "Product feels this metric is enough to nudge the customer by sending a follow-up email",
+    reason      = "There's reason to belive this is some suspicious activity and should be alerted",
     listener    = TriggerEmailOnSteadyClick
 )

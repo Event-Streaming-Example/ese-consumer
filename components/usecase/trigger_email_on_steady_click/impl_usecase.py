@@ -1,5 +1,3 @@
-import streamlit as st
-
 from typing import List
 
 from components.abstractions import UsecaseListener
@@ -9,6 +7,7 @@ from components.datasource.backend.models.interractor import Snapshot, IpSnapsho
 from components.datasource.backend.view_consumer_metrics import get_max_lag, view_lag_metrics
 from components.usecase.trigger_email_on_steady_click.models import EventMailTracker
 from components.usecase.trigger_email_on_steady_click.constant import THRESHOLD_CONSECUTIVE_EVENTS, THRESHOLD_LIMIT_IN_EPOCH_MILLI
+from components.usecase.trigger_email_on_steady_click.view_results import view_sent_emails
 
 
 
@@ -31,7 +30,7 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
         view_lag_metrics(stats_ctx)
 
         self._find_and_send_mail(self)
-        self._view_sent_emails(self, view_ctx)
+        view_sent_emails(view_ctx, EVENT_MAIL_TRACKER)
 
 
     def view(self, view_ctx, stats_ctx): 
@@ -40,8 +39,8 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
         if view_ctx.button("Clear output"): 
             SNAPSHOT_LOG.clear()
 
-        self._view_sent_emails(self, view_ctx)
         view_lag_metrics(stats_ctx)
+        view_sent_emails(view_ctx, EVENT_MAIL_TRACKER)
 
 
     def _format_data(self, data: List[EventIPSnapshotData]): 
@@ -100,14 +99,3 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
                     sent_mail = True
                 ))
                 MARKED_SNAPSHOT_LOG.append(snapshot.ip, consecutive_logs)
-
-
-    def _view_sent_emails(self, view_ctx):
-        result = []
-        for item in EVENT_MAIL_TRACKER: 
-            result.append({
-                "ip"       : item.ip,
-                "instances": [ts.timestamp for ts in item.logs],
-                "mail sent": item.sent_mail
-            })     
-        view_ctx.json(result)
