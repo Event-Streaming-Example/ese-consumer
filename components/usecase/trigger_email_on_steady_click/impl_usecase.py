@@ -1,12 +1,15 @@
+import streamlit as st
+
 from typing import List
 
 from components.abstractions import UsecaseListener
-from components.mailer.configs import MailerViewConfig
+from components.mailer.configs import MailerViewConfig, Mail
+from components.mailer.client import send_email
 from components.datasource.backend.models.response import EventIPSnapshotData, EventSubType
 from components.datasource.backend.models.interractor import Snapshot, IpSnapshotLog
 from components.datasource.backend.view_consumer_metrics import get_max_lag, view_lag_metrics
 from components.usecase.trigger_email_on_steady_click.models import EventMailTracker
-from components.usecase.trigger_email_on_steady_click.constant import THRESHOLD_CONSECUTIVE_EVENTS, THRESHOLD_LIMIT_IN_EPOCH_MILLI
+from components.usecase.trigger_email_on_steady_click.constant import THRESHOLD_CONSECUTIVE_EVENTS, THRESHOLD_LIMIT_IN_EPOCH_MILLI, build_email
 from components.usecase.trigger_email_on_steady_click.view_results import view_sent_emails
 
 
@@ -31,7 +34,7 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
         get_max_lag(SNAPSHOT_LOG)
         view_lag_metrics(stats_ctx)
 
-        self._find_and_send_mail(self)
+        self._find_and_send_mail(self, view_config)
         view_sent_emails(view_ctx, EVENT_MAIL_TRACKER)
 
 
@@ -88,16 +91,27 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
         return consecutive_snapshots
     
 
-    def _find_and_send_mail(self): 
+    def _send_email(self, ip: str, logs: List[Snapshot], config: MailerViewConfig) -> bool: 
+        mail = build_email(ip, logs)
+        try: 
+            send_email(config, mail)
+            return True
+        except Exception as e: 
+            st.error(f"There was an error sending email. [{e}]")
+            return False
+
+
+    def _find_and_send_mail(self, config: MailerViewConfig): 
         global SNAPSHOT_LOG, MARKED_SNAPSHOT_LOG, EVENT_MAIL_TRACKER
         filtered_snapshot: IpSnapshotLog = self._filter_snapshots(self, SNAPSHOT_LOG, MARKED_SNAPSHOT_LOG)
 
-        for snapshot in filtered_snapshot.get_iterable():
+        for snapshot in filtered_snapshot.get_iterable(): 
             consecutive_logs = self._get_consecutive_click_snapshots(self, snapshot.logs)
             if len(consecutive_logs) != 0:
+                email_result = self._send_email(self, snapshot.ip, consecutive_logs, config)
                 EVENT_MAIL_TRACKER.append(EventMailTracker(
                     ip        = snapshot.ip,
                     logs      = consecutive_logs,
-                    sent_mail = True
+                    sent_mail = email_result
                 ))
                 MARKED_SNAPSHOT_LOG.append(snapshot.ip, consecutive_logs)

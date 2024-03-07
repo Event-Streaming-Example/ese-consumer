@@ -1,6 +1,15 @@
+from dataclasses import dataclass
+
 from components.abstractions import ViewConfig
 
 
+@dataclass
+class Mail: 
+
+    _from   : str
+    _to     : str
+    _subject: str
+    _body   : str
 
 class MailerViewConfig(ViewConfig): 
 
