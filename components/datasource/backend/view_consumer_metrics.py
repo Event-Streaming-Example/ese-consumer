@@ -3,7 +3,7 @@ import sys
 from typing import List
 from datetime import timedelta
 
-from components.datasource.backend.models.interractor import IPSnapshot
+from components.datasource.backend.models.interractor import IpSnapshotLog
 
 
 
@@ -45,20 +45,18 @@ def _format_time_delta(milliseconds: int):
     return formatted_string
 
 
-def get_max_lag(data: List[IPSnapshot]): 
+def get_max_lag(data: IpSnapshotLog): 
     global MAX_CONSUMER_LAG, MAX_PRODUCER_LAG, MIN_PRODUCER_LAG, MIN_CONSUMER_LAG
     total_snapshot_producer_lag = []
     total_snapshot_consumer_lag = []
-    for ip_snapshot in data      : 
-        for event in ip_snapshot.logs: 
 
-            MAX_PRODUCER_LAG = max(MAX_PRODUCER_LAG, event.get_producer_delta())
-            MAX_CONSUMER_LAG = max(MAX_CONSUMER_LAG, event.get_consumer_delta())
-            total_snapshot_producer_lag.append(event.get_producer_delta())
-            total_snapshot_consumer_lag.append(event.get_consumer_delta())
-
-            MIN_PRODUCER_LAG = min(MIN_PRODUCER_LAG, event.get_producer_delta())
-            MIN_CONSUMER_LAG = min(MIN_CONSUMER_LAG, event.get_consumer_delta())
+    for log in data.get_logs():
+        MAX_PRODUCER_LAG = max(MAX_PRODUCER_LAG, log.get_producer_delta())
+        MAX_CONSUMER_LAG = max(MAX_CONSUMER_LAG, log.get_consumer_delta())
+        MIN_PRODUCER_LAG = min(MIN_PRODUCER_LAG, log.get_producer_delta())
+        MIN_CONSUMER_LAG = min(MIN_CONSUMER_LAG, log.get_consumer_delta())
+        total_snapshot_producer_lag.append(log.get_producer_delta())
+        total_snapshot_consumer_lag.append(log.get_consumer_delta())
 
     AVG_LAG.append({
         "producer lag": _get_snapshot_stats_avg(total_snapshot_producer_lag),
