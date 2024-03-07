@@ -1,11 +1,18 @@
+import pika
+import json
+
 from components.mailer.configs import MailerViewConfig, Mail
 
 def send_email(config:MailerViewConfig, mail: Mail):
-    print("\n=== sending mail ===")
-    print(f"- URL : {config.queue_url}")
-    print(f"- Channel :{config.channel}")
-    print(f"- From : {mail._from}")
-    print(f"- To : {mail._to}")
-    print(f"- Subject : {mail._subject}")
-    print(f"- Body : {mail._body}")
-    print("======\n")
+    connection = pika.BlockingConnection(pika.ConnectionParameters(config.queue_url))
+    channel = connection.channel()
+
+    message = json.dumps(mail.to_json())
+
+    channel.queue_declare(queue=config.channel)
+    channel.basic_publish(
+        exchange="",
+        routing_key=config.channel,
+        body=message
+    )
+    connection.close()

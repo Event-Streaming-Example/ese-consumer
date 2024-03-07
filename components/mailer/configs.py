@@ -11,6 +11,14 @@ class Mail:
     _subject: str
     _body   : str
 
+    def to_json(self): 
+        return {
+            "from"   : self._from,
+            "to"     : self._to,
+            "subject": self._subject,
+            "content": self._body
+        }
+
 class MailerViewConfig(ViewConfig): 
 
     queue_url: str
