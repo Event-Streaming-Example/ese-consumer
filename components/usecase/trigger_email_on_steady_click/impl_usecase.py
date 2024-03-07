@@ -10,10 +10,12 @@ from components.usecase.trigger_email_on_steady_click.constant import THRESHOLD_
 from components.usecase.trigger_email_on_steady_click.view_results import view_sent_emails
 
 
+# This will be overwritten on each call. Hence not initializing
+SNAPSHOT_LOG       : IpSnapshotLog
 
-SNAPSHOT_LOG: IpSnapshotLog
-MARKED_SNAPSHOT_LOG = IpSnapshotLog()
-EVENT_MAIL_TRACKER: List[EventMailTracker] = []
+# This will be created just once and then appended to
+MARKED_SNAPSHOT_LOG: IpSnapshotLog = IpSnapshotLog()
+EVENT_MAIL_TRACKER : List[EventMailTracker] = []
 
 
 class TriggerEmailOnSteadyClick(UsecaseListener): 
