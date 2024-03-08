@@ -78,7 +78,8 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
             return consecutive_snapshots
         
         consecutive_snapshots.append(data[0])
-        for i in range(1, len(data))                                  : 
+        for i in range(1, len(data)):
+            if len(consecutive_snapshots) == 0: continue 
             if len(consecutive_snapshots) == THRESHOLD_CONSECUTIVE_EVENTS: 
                 return consecutive_snapshots
             if(abs(data[i].timestamp - data[i-1].timestamp) <= THRESHOLD_LIMIT_IN_EPOCH_MILLI): 
