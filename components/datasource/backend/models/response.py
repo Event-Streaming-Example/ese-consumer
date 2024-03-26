@@ -1,40 +1,34 @@
-from typing import List
+import time
 from dataclasses import dataclass
-
 from components.datasource import EventType, EventSubType
 
 
 
 @dataclass
-class EventData: 
+class Event: 
 
-      event: EventSubType
+      type       : EventType
+      sub_type   : EventSubType
+      client_ts  : int
+      server_ts  : int
+      consumer_ts: int
+      ip         : str
+      data       : dict
 
+      def __init__(self, json_data):
+            self.type        = json_data['type']
+            self.sub_type    = json_data['sub_type']
+            self.client_ts   = json_data['client_ts']
+            self.server_ts   = json_data['server_ts']
+            self.consumer_ts = int(time.time() * 1000)
+            self.ip          = json_data['ip']
+            self.data        = json_data['data']
 
-@dataclass
-class Entity: 
+      def __eq__(self, __value: object) -> bool:
+            return (self.client_ts == __value.client_ts) and (self.type == __value.type) and (self.sub_type == __value.sub_type)
 
-      event_type: EventType
-      timestamp : int
-      ip        : str
-      data      : EventData
-
-
-@dataclass
-class MetaData: 
+      def get_producer_delta(self) -> int: 
+            return self.server_ts - self.client_ts
       
-      server_timestamp: int
-
-
-@dataclass
-class EventLog: 
-
-      entity   : Entity
-      meta_data: MetaData
-
-
-@dataclass
-class EventIPSnapshotData: 
-
-      ip        : str
-      event_logs: List[EventLog]
+      def get_consumer_delta(self) -> int: 
+            return self.consumer_ts - self.server_ts

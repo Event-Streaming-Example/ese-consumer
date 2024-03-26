@@ -12,7 +12,7 @@ from components.usecase.trigger_email_on_steady_click.utility import format_time
 def view_sent_emails(view_ctx, data:List[EventMailTracker]): 
         result = []
         for item in data: 
-            timestamps     = sorted([ts.timestamp for ts in item.logs])
+            timestamps     = sorted([ts.client_ts for ts in item.logs])
             timestamps_str = format_timestamps(timestamps)
             duration       = timestamp_delta_to_string(abs(timestamps[-1] - timestamps[0]))
             result.append({

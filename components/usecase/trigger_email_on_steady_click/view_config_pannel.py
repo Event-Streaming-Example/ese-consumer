@@ -1,5 +1,4 @@
 import asyncio
-
 from components.models import Usecase
 from components.mailer.view_config_interractor import get_mailer_config
 from components.datasource.kafka.view_config_interractor import get_kafka_ds_config
