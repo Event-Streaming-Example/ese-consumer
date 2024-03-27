@@ -27,7 +27,6 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
     def update(self, data: Dict[str, List[Event]], view_ctx, stats_ctx, view_config: MailerViewConfig): 
         global EVENTS_MANAGER
         EVENTS_MANAGER.append(data)
-        print(EVENTS_MANAGER.debug())
 
         calculate_lag(EVENTS_MANAGER.get_all_events())
         view_lag_metrics(stats_ctx)
@@ -41,10 +40,11 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
 
 
     def view(self, view_ctx, stats_ctx): 
-        global EVENTS_MANAGER
+        global EVENTS_MANAGER, EVENT_MAIL_TRACKER
 
         if view_ctx.button("Clear output"): 
             EVENTS_MANAGER.clear()
+            EVENT_MAIL_TRACKER.clear()
 
         view_lag_metrics(stats_ctx)
         view_sent_emails(view_ctx, EVENT_MAIL_TRACKER)
@@ -67,24 +67,23 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
                     result[ip] = consecutive_events
         return result
 
-    
-
-    def _send_email(self, ip: str, logs: List[Event], config: MailerViewConfig) -> bool: 
-        mail = build_email(ip, logs)
-        try: 
-            send_email(config, mail)
-            return True
-        except Exception as e: 
-            st.error(f"There was an error sending email. [{e}]")
-            return False
-
 
     def _flag_and_mark_events(self, event_log: Dict[str, List[Event]], config: MailerViewConfig):
         global EVENT_MAIL_TRACKER, EVENTS_MANAGER
+
+        def _send_email(ip: str, logs: List[Event], config: MailerViewConfig) -> bool: 
+            mail = build_email(ip, logs)
+            try: 
+                send_email(config, mail)
+                return True
+            except Exception as e: 
+                st.error(f"There was an error sending email. [{e}]")
+                return False
+
         for ip, consecutive_events in event_log.items():
             for event in consecutive_events:
                 EVENTS_MANAGER.mark_event(ip, event)
-            email_result = self._send_email(self, ip, consecutive_events, config)
+            email_result = _send_email(ip, consecutive_events, config)
             EVENT_MAIL_TRACKER.append(EventMailTracker(
                 ip        = ip,
                 logs      = consecutive_events,

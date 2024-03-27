@@ -4,7 +4,7 @@ from datetime import datetime
 from components.usecase.trigger_email_on_steady_click.models import EventMailTracker
 from components.usecase.trigger_email_on_steady_click.constant import THRESHOLD_CONSECUTIVE_EVENTS, THRESHOLD_LIMIT_IN_EPOCH_MILLI, EMAIL_TO
 from components.datasource import EventSubType
-from components.usecase.trigger_email_on_steady_click.utility import format_timestamps, timestamp_delta_to_string
+from components.usecase.trigger_email_on_steady_click.utility import format_timestamp, timestamp_delta_to_string
 
 
 
@@ -12,15 +12,19 @@ from components.usecase.trigger_email_on_steady_click.utility import format_time
 def view_sent_emails(view_ctx, data:List[EventMailTracker]): 
         result = []
         for item in data: 
-            timestamps     = sorted([ts.client_ts for ts in item.logs])
-            timestamps_str = format_timestamps(timestamps)
-            duration       = timestamp_delta_to_string(abs(timestamps[-1] - timestamps[0]))
+            client_timestamp   = sorted([ts.client_ts for ts in item.logs])
+            consumer_timestamp = sorted([ts.consumer_ts for ts in item.logs])
+
+            activity_duration = timestamp_delta_to_string(abs(client_timestamp[-1] - client_timestamp[0]))
+            detetction_lag    = timestamp_delta_to_string(abs(consumer_timestamp[-1] - client_timestamp[-1]))
+            
             result.append({
-                "IP Address"    : item.ip,
-                "Activity Start": timestamps_str[0],
-                "Activity End"  : timestamps_str[-1],
-                "Duration"      : duration,
-                "Email Sent"    : "✅" if item.sent_mail else "❌"
+                "IP Address"       : item.ip,
+                "Activity Start"   : format_timestamp(client_timestamp[0]),
+                "Activity End"     : format_timestamp(client_timestamp[-1]),
+                "Activity Duration": activity_duration,
+                "Detetction Lag"   : detetction_lag,
+                "Email Sent"       : "✅" if item.sent_mail else "❌"
             })  
         c = view_ctx.container()
         c.markdown(f"""

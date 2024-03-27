@@ -1,7 +1,7 @@
 from typing import List
 
 from components.mailer.configs import Mail
-from components.usecase.trigger_email_on_steady_click.utility import format_timestamps, timestamp_delta_to_string
+from components.usecase.trigger_email_on_steady_click.utility import format_timestamp, timestamp_delta_to_string
 from components.datasource.backend.models.response import Event
 from components.datasource import EventSubType
 
@@ -16,11 +16,10 @@ EMAIL_BODY    = f"{THRESHOLD_CONSECUTIVE_EVENTS} {EventSubType.KEY_PRESS_EVENT.v
 
 def build_email(ip: str, logs: List[Event]) -> Mail: 
     ts        = sorted([t.client_ts for t in logs])
-    ts_string = format_timestamps(ts)
     duration  = timestamp_delta_to_string(abs(ts[-1] - ts[0]))
     return Mail(
         _from    = EMAIL_FROM,
         _to      = EMAIL_TO,
         _subject = EMAIL_SUBJECT.replace("IP_ADDRESS", ip),
-        _body    = EMAIL_BODY.replace("START_TIME", ts_string[0]).replace("END_TIME", ts_string[-1]).replace("DURATION", duration)
+        _body    = EMAIL_BODY.replace("START_TIME", format_timestamp(ts[0])).replace("END_TIME", format_timestamp(ts[-1])).replace("DURATION", duration)
     )

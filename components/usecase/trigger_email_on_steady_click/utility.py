@@ -1,8 +1,9 @@
 from typing import List
 from datetime import datetime
 
-def format_timestamps(timestamps: List[int]) ->List[str]: 
-    return [datetime.fromtimestamp(ts / 1000).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3] for ts in timestamps]
+
+def format_timestamp(timestamp: int) ->List[str]: 
+    return datetime.fromtimestamp(timestamp / 1000).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
 
 def timestamp_delta_to_string(timestamp: int) -> str: 

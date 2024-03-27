@@ -26,6 +26,9 @@ class Event:
 
       def __eq__(self, __value: object) -> bool:
             return (self.client_ts == __value.client_ts) and (self.type == __value.type) and (self.sub_type == __value.sub_type)
+      
+      def __hash__(self) -> int:
+            return hash((self.type, self.sub_type, self.ip, self.client_ts))
 
       def get_producer_delta(self) -> int: 
             return self.server_ts - self.client_ts
