@@ -33,6 +33,7 @@ def kafka_pannel(self: Usecase, ctx, view_ctx, stats_ctx):
             if ctx.button("Initiate Polling"):
                 self.initiate = True
                 asyncio.run(self._poll_data_and_update_listener(ctx, view_ctx, stats_ctx, kafka_fetch_latest_data, kafka_config, mailer_config))
+                if self.initiate == False: kafka_config.kafka_consumer.close()
         else:
             ctx.error("Invalid configs passed")
     else: 

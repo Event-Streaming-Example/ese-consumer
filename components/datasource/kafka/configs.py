@@ -11,7 +11,6 @@ class KafkaDSConfig(DataSourceConfig):
 
     CONSUMER_GROUP_ID  = "ese.consumer.kafka_group_id"
     AUTO_OFFSET_RESET  = "earliest"
-    ENABLE_AUTO_COMMIT = True
 
     def __init__(self, frequency: int, topic:str, brokers: str) -> None: 
         super().__init__()
@@ -28,8 +27,7 @@ class KafkaDSConfig(DataSourceConfig):
         conf =  {
             'bootstrap.servers' : self.brokers,
             'group.id'          : self.CONSUMER_GROUP_ID,
-            'auto.offset.reset' : self.AUTO_OFFSET_RESET,
-            'enable.auto.commit': self.ENABLE_AUTO_COMMIT
+            'auto.offset.reset' : self.AUTO_OFFSET_RESET
         }
         consumer = Consumer(conf)
         consumer.subscribe([self.topic])
