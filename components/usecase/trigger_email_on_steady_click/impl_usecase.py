@@ -59,6 +59,7 @@ class TriggerEmailOnSteadyClick(UsecaseListener):
                 consecutive_events.append(events[0])
                 for i in range(1, len(events)):
                     if len(consecutive_events) != THRESHOLD_CONSECUTIVE_EVENTS:
+                        print(abs(events[i].client_ts - events[i-1].client_ts))
                         if(abs(events[i].client_ts - events[i-1].client_ts) <= THRESHOLD_LIMIT_IN_EPOCH_MILLI):
                             consecutive_events.append(events[i])
                         else:

@@ -1,49 +1,39 @@
-from components.abstractions import DataSourceConfig
-from components.datasource import EventSubType, EventType
+from components.datasource import EventType
 from components.datasource.kafka.configs import KafkaDSConfig
 from components.datasource.response import Event
 
 from typing import List, Dict
 from confluent_kafka import KafkaError, Consumer
 
-import time
 import json
 
 
-KAFKA_MESSAGES = []
+KAFKA_EVENT_MESSAGE_MAP: Dict[str, List[Event]] = {}
 
 KAFKA_CONSUMER_MEMOIZED: Consumer
 MEMOIZED_FLAG: bool = False
 
+
+
 def fetch_latest_data(ctx, config: KafkaDSConfig) -> Dict[str, List[Event]]: 
 
+    global KAFKA_EVENT_MESSAGE_MAP
     consumer = get_consumer(config)
     msg = consumer.poll(1.0)
 
     if msg is not None:
         message = consume_message(ctx, msg)
         if message is not None:
-            KAFKA_MESSAGES.append(message)
+            if KAFKA_EVENT_MESSAGE_MAP.get(message.ip):
+                KAFKA_EVENT_MESSAGE_MAP[message.ip].append(message)
+            else:
+                KAFKA_EVENT_MESSAGE_MAP[message.ip] = [message]
+        else: print("Message is None")
+    else: print("Msg is None")
 
-    print(KAFKA_MESSAGES)
 
+    return KAFKA_EVENT_MESSAGE_MAP
 
-    ip = "some_ip"
-    event_json = {
-            "type" : EventType.CLICK_STREAM_EVENT,
-            "sub_type" : EventSubType.KEY_PRESS_EVENT,
-            "client_ts" : int(time.time() * 1000),
-            "server_ts" : int(time.time() * 1000),
-            "ip" : ip,
-            "data" : {
-                "some_key" : "some_value"
-            }
-        }
-    events = []
-    events.append(Event(event_json))
-    return {
-        ip : events
-    }
 
 
 def get_consumer(config: KafkaDSConfig):
@@ -56,9 +46,11 @@ def get_consumer(config: KafkaDSConfig):
     return KAFKA_CONSUMER_MEMOIZED
 
 
+
 def map_topic(topic):
     if topic == 'click-events': return EventType.CLICK_STREAM_EVENT
     return EventType.ORDER_STATE_UPDATE_EVENT
+
 
 
 def consume_message(ctx, msg):
@@ -68,10 +60,9 @@ def consume_message(ctx, msg):
                   (msg.topic(), msg.partition(), msg.offset()))
         elif msg.error():
             ctx.error(msg.error())
-            return None
+        return None
     else:
         value = json.loads(msg.value().decode('utf-8'))
-        print(value)
         value['type'] = map_topic(msg.topic())
         value['client_ts'] = value['client_timestamp']
         value['server_ts'] = msg.timestamp()[1]
