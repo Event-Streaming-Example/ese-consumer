@@ -3,8 +3,8 @@ from typing import List, Dict
 from components.abstractions import UsecaseListener
 from components.mailer.configs import MailerViewConfig
 from components.mailer.client import send_email
-from components.datasource.backend.models.events_manager import EventsManager
-from components.datasource.backend.models.response import EventSubType, Event
+from components.datasource.events_manager import EventsManager
+from components.datasource.response import EventSubType, Event
 from components.datasource.backend.view_consumer_metrics import calculate_lag, view_lag_metrics
 from components.usecase.trigger_email_on_steady_click.models import EventMailTracker
 from components.usecase.trigger_email_on_steady_click.constant import THRESHOLD_CONSECUTIVE_EVENTS, THRESHOLD_LIMIT_IN_EPOCH_MILLI, build_email

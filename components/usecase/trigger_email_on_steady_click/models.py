@@ -1,6 +1,6 @@
 from typing import List
 from dataclasses import dataclass
-from components.datasource.backend.models.response import Event
+from components.datasource.response import Event
 
 
 @dataclass

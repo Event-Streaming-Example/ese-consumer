@@ -2,7 +2,7 @@ from typing import List, Dict
 from itertools import chain
 
 from components.datasource import EventSubType
-from components.datasource.backend.models.response import Event
+from components.datasource.response import Event
 
 
 
@@ -22,7 +22,7 @@ class EventsManager():
                 self._event_logs[ip].clear()
                 self._event_logs[ip] = list(set(present_log + events))
             else:
-                self._event_logs[ip] = events              
+                self._event_logs[ip] = events     
             self._event_logs[ip].sort(key=lambda x:x.client_ts)
 
     def get_all_events(self)->List[Event]:

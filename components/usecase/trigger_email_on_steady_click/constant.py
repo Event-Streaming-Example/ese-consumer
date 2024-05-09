@@ -2,7 +2,7 @@ from typing import List
 
 from components.mailer.configs import Mail
 from components.usecase.trigger_email_on_steady_click.utility import format_timestamp, timestamp_delta_to_string
-from components.datasource.backend.models.response import Event
+from components.datasource.response import Event
 from components.datasource import EventSubType
 
 

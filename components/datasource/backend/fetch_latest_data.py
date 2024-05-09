@@ -1,7 +1,7 @@
 import requests
 from typing import List, Dict
-from components.datasource.backend.models.response import Event
-from components.datasource.backend.models.configs import BackendDSConfig
+from components.datasource.response import Event
+from components.datasource.backend.configs import BackendDSConfig
 
 
 

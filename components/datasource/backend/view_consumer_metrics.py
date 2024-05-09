@@ -3,7 +3,7 @@ import sys
 from typing import List
 from datetime import timedelta
 
-from components.datasource.backend.models.response import Event
+from components.datasource.response import Event
 
 
 AVG_LAG = []
